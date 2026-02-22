@@ -2,7 +2,7 @@ version: "3"
 services:
   env:
     build:
-      context: .
+      context: sim_SUAS
       dockerfile: Env.Containerfile
     container_name: multirotor_env
     network_mode: host
@@ -16,7 +16,7 @@ services:
     tty: true
   sim:
     build:
-      context: .
+      context: sim_SUAS
       dockerfile: Sim.Containerfile
     container_name: multirotor_sim
     network_mode: host
