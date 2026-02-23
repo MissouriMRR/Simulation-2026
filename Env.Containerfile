@@ -26,7 +26,7 @@ ENV PATH="$POETRY_HOME/bin:$PATH"
 RUN mkdir /pyenv
 WORKDIR /pyenv
 
-COPY ./pyproject.toml ./
+COPY pyproject.toml ./
 
 # install stuff to global python environment instead of creating a virtualenv
 # the container is our virtual environment
