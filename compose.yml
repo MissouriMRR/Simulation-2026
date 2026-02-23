@@ -2,21 +2,21 @@ version: "3"
 services:
   env:
     build:
-      context: sim_SUAS
+      context: .
       dockerfile: Env.Containerfile
     container_name: multirotor_env
     network_mode: host
     volumes:
       - type: bind
         source: ./
-        target: /sim_SUAS
+        target: /
     working_dir: /SUAS
     command: bash
     stdin_open: true
     tty: true
   sim:
     build:
-      context: sim_SUAS
+      context: .
       dockerfile: Sim.Containerfile
     container_name: multirotor_sim
     network_mode: host
