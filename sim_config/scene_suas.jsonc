@@ -1,0 +1,88 @@
+{
+  "id": "SUAS_scene",
+  "actors": [
+    {
+      "type": "robot",
+      "name": "Drone1",
+      "origin": {
+        "reference-frame": "Frame",
+        "xyz": "0 0 -15",
+        "rpy-deg": "0 0 0"
+      },
+      "robot-config": "robot_quadrotor_fastphysics.jsonc",
+      "start-landed": true
+    },
+    {
+      "type": "robot",
+      "name": "Drone2",
+      "origin": {
+        "reference-frame": "Frame",
+        "xyz": "0 10 -15",
+        "rpy-deg": "0 0 0"
+      },
+      "robot-config": "robot_quadrotor_fastphysics.jsonc",
+      "start-landed": true
+    },
+    {
+      "type": "robot",
+      "name": "Drone3",
+      "origin": {
+        "reference-frame": "Frame",
+        "xyz": "0 5 -15",
+        "rpy-deg": "0 0 0"
+      },
+      "robot-config": "robot_quadrotor_fastphysics.jsonc",
+      "start-landed": true
+    },
+    {
+      "type": "robot",
+      "name": "Drone4",
+      "origin": {
+        "reference-frame": "Frame",
+        "xyz": "0 15 -15",
+        "rpy-deg": "0 0 0"
+      },
+      "robot-config": "robot_quadrotor_fastphysics.jsonc",
+      "start-landed": true
+    },
+    {
+      "type": "robot",
+      "name": "Drone5",
+      "origin": {
+        "reference-frame": "Frame",
+        "xyz": "0 20 -15",
+        "rpy-deg": "0 0 0"
+      },
+      "robot-config": "robot_quadrotor_fastphysics.jsonc",
+      "start-landed": true
+    },
+    {
+      "type": "robot",
+      "name": "Drone1111",
+      "origin": {
+        "reference-frame": "Frame",
+        "xyz": "0 20 -15",
+        "rpy-deg": "0 0 0"
+      },
+      "robot-config": "robot_quadrotor_fastphysics.jsonc",
+      "start-landed": true
+    }
+  ],
+  "clock": {
+    "type": "steppable",
+    "step-ns": 3000000,
+    "real-time-update-rate": 3000000,
+    "pause-on-start": false
+  },
+  "home-geo-point": {
+    "latitude": 37.9490953,
+    "longitude": -91.7848293,
+    "altitude": 100.0
+  },
+  "segmentation": {
+    "initialize-ids": true,
+    "ignore-existing": false,
+    "use-owner-name": true
+  },
+  "scene-type": "UnrealNative"
+}
