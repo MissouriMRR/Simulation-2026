@@ -25,7 +25,7 @@ RUN pip install -U numpy
 # add GolfCourse location to ArduPilot locations
 RUN echo '# Multirotor Locations\nGolfCourse=37.9490953,-91.7848293,0,0' >> /ardupilot/Tools/autotest/locations.txt
 
-COPY ./sim_start_drones.sh /ardupilot/Tools/autotest/
+COPY simulation/sim_start_drones.sh /ardupilot/Tools/autotest/
 
 # Environment Variables
 ENV OUT_PORT=14550
