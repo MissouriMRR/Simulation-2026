@@ -37,10 +37,11 @@ WORKDIR /pyenv
 
 COPY ./pyproject.toml ./
 
-RUN uv pip install --system -r pyproject.toml
+RUN uv export --format requirements-txt --output-file requirements.txt && \
+    uv pip install --system -r requirements.txt
 
 RUN python -m pip install -e /pyenv/projectairsim
 
-RUN pip install --system pre-commit
+RUN uv pip install --system pre-commit
 
 RUN uv cache clean
