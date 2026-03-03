@@ -9,7 +9,7 @@
         "xyz": "0 0 -15",
         "rpy-deg": "0 0 0"
       },
-      "robot-config": "robot_quadrotor_fastphysics.jsonc",
+      "robot-config": "/SUAS/simulation/sim_config/robot_quadrotor_fastphysics.jsonc",
       "start-landed": true
     },
     {
@@ -20,7 +20,7 @@
         "xyz": "0 10 -15",
         "rpy-deg": "0 0 0"
       },
-      "robot-config": "robot_quadrotor_fastphysics.jsonc",
+      "robot-config": "/SUAS/simulation/sim_config/robot_quadrotor_fastphysics.jsonc",
       "start-landed": true
     },
     {
@@ -31,40 +31,7 @@
         "xyz": "0 5 -15",
         "rpy-deg": "0 0 0"
       },
-      "robot-config": "robot_quadrotor_fastphysics.jsonc",
-      "start-landed": true
-    },
-    {
-      "type": "robot",
-      "name": "Drone4",
-      "origin": {
-        "reference-frame": "Frame",
-        "xyz": "0 15 -15",
-        "rpy-deg": "0 0 0"
-      },
-      "robot-config": "robot_quadrotor_fastphysics.jsonc",
-      "start-landed": true
-    },
-    {
-      "type": "robot",
-      "name": "Drone5",
-      "origin": {
-        "reference-frame": "Frame",
-        "xyz": "0 20 -15",
-        "rpy-deg": "0 0 0"
-      },
-      "robot-config": "robot_quadrotor_fastphysics.jsonc",
-      "start-landed": true
-    },
-    {
-      "type": "robot",
-      "name": "Drone1111",
-      "origin": {
-        "reference-frame": "Frame",
-        "xyz": "0 20 -15",
-        "rpy-deg": "0 0 0"
-      },
-      "robot-config": "robot_quadrotor_fastphysics.jsonc",
+      "robot-config": "/SUAS/simulation/sim_config/robot_quadrotor_fastphysics.jsonc",
       "start-landed": true
     }
   ],

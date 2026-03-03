@@ -4,36 +4,41 @@ FROM python:${PYTHON_VERSION}
 
 # Set noninteractive frontend for apt
 ENV DEBIAN_FRONTEND=noninteractive
+ENV UV_SYSTEM_PYTHON=1
 
-# Install dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends python3-wxgtk4.0 && \
-    rm -rf /var/lib/apt/lists/*
+# INSTALL UV
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-# Ensure pip is up to date
-RUN python -m pip install --upgrade pip
+# Install System Dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    curl \
+    libgl1 \
+    libglib2.0-0 \
+    python3-wxgtk4.0 \
+    && rm -rf /var/lib/apt/lists/*
 
-# INSTALL POETRY
-
-ENV POETRY_HOME=/etc/poetry \
-    POETRY_VERSION=1.8.5
-
-RUN curl -sSL https://install.python-poetry.org | python3 -
-ENV PATH="$POETRY_HOME/bin:$PATH"
-    
-# INSTALL DEPENDENCIES
-    
+# INSTALL PROJECTAIRSIM
 RUN mkdir /pyenv
+WORKDIR /tmp
+RUN git clone --filter=blob:none --no-checkout https://github.com/iamaisim/ProjectAirSim.git \
+    && cd ProjectAirSim \
+    && git sparse-checkout init --cone \
+    && git sparse-checkout set client/python/projectairsim \
+    && git checkout 3302010393ac896e8dffc16cbbe2ec1e05d844e3 \
+    && mv client/python/projectairsim /pyenv/projectairsim \
+    && cd / \
+    && rm -rf /tmp/ProjectAirSim
+
+# INSTALL DEPENDENCIES
 WORKDIR /pyenv
 
-COPY pyproject.toml ./
+COPY ./pyproject.toml ./
 
-# install stuff to global python environment instead of creating a virtualenv
-# the container is our virtual environment
-ENV POETRY_VIRTUALENVS_CREATE=false
-RUN poetry install --no-interaction --no-ansi
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv lock && \
+    uv sync --no-install-project
 
-# additional, non-essential packages/libraries
-RUN apt-get update && apt-get install -y tmux iproute2
+RUN uv pip install -e /pyenv/projectairsim
 
-RUN pip install pre-commit
+RUN uv pip install --system pre-commit
