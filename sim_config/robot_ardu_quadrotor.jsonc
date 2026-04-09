@@ -198,11 +198,17 @@
     }
   ],
   "controller": {
-    "id": "Simple_Flight_Controller",
-    "airframe-setup": "quadrotor-x",
-    "type": "simple-flight-api",
-    "simple-flight-api-settings": {
-      "actuator-order": [
+    "id": "ArduPilot_Controller",
+    "type": "ardupilot-api",
+    "ardupilot-settings": {
+      "ardupilot-ip": "127.0.0.1",
+      "ardupilot-udp-port": 9002, // AirSim sends to the SITL(ardupilot)
+
+      "local-host-ip": "0.0.0.0",
+      "local-host-udp-port": 9003, // ardupilot sends to Unreal(AirSim)
+
+      "use-distance-sensor": true,
+      "actuator-order": [ 
         {
           "id": "Prop_FR_actuator"
         },
@@ -338,7 +344,7 @@
       "capture-interval": 0.02,
       "capture-settings": [
         {
-          "image-type": 0,  // scene camera
+          "image-type": 0,
           "width": 400,
           "height": 225,
           "fov-degrees": 90,
@@ -349,58 +355,27 @@
           "target-gamma": 2.5
         },
         {
-          "image-type": 1,  // depth planar
+          "image-type": 1,
           "width": 400,
           "height": 225,
           "fov-degrees": 90,
           "capture-enabled": false,
           "streaming-enabled": false,
-          "pixels-as-float": true,
+          "pixels-as-float": false,
           "compress": false
         },
         {
-          "image-type": 2,  // depth perspective
+          "image-type": 2,
           "width": 400,
           "height": 225,
           "fov-degrees": 90,
           "capture-enabled": true,
           "streaming-enabled": false,
-          "pixels-as-float": true,
-          "compress": false
-        },
-        {
-          "image-type": 3,  // segmentation
-          "width": 400,
-          "height": 225,
-          "fov-degrees": 90,
-          "capture-enabled": false,
-          "streaming-enabled": false,
           "pixels-as-float": false,
           "compress": false
         },
         {
-          "image-type": 4,  // depth vis
-          "width": 400,
-          "height": 225,
-          "fov-degrees": 90,
-          "capture-enabled": false,
-          "streaming-enabled": false,
-          "pixels-as-float": false,
-          "compress": false,
-          "max-depth-meters": 100
-        },
-        {
-          "image-type": 5,  // disparity normalized
-          "width": 400,
-          "height": 225,
-          "fov-degrees": 90,
-          "capture-enabled": false,
-          "streaming-enabled": false,
-          "pixels-as-float": false,
-          "compress": false
-        },
-        {
-          "image-type": 6,  // surface normals
+          "image-type": 3,
           "width": 400,
           "height": 225,
           "fov-degrees": 90,
@@ -455,28 +430,20 @@
     {
       "id": "GPS",
       "type": "gps",
-      "enabled": false,
+      "enabled": true,
       "parent-link": "Frame"
     },
     {
       "id": "Barometer",
       "type": "barometer",
-      "enabled": false,
+      "enabled": true,
       "parent-link": "Frame"
     },
     {
       "id": "Magnetometer",
       "type": "magnetometer",
-      "enabled": false,
+      "enabled": true,
       "parent-link": "Frame"
-    },
-    {
-      "mavlink": {
-        "type": "Mavlink",
-        "udp-ip": "127.0.0.1",
-        "udp-port": 14550,
-        "use-serial": false
-    }
     }
   ]
 }

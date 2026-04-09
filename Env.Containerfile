@@ -39,6 +39,6 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv lock && \
     uv sync --no-install-project
 
-RUN uv pip install -e /pyenv/projectairsim
+RUN uv pip install --system -e /pyenv/projectairsim
 
 RUN uv pip install --system pre-commit

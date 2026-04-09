@@ -20,6 +20,7 @@ services:
       dockerfile: simulation/Sim.Containerfile
     container_name: multirotor_sim
     network_mode: host
+    # command: python /ardupilot/Tools/autotest/sim_vehicle.py -v ArduCopter -f airsim-copter --out=udp:host.docker.internal:9003
     command: python /ardupilot/Tools/autotest/sim_vehicle.py -v ArduCopter -f airsim-copter --out=127.0.0.1:14550
     stdin_open: true
     tty: true
