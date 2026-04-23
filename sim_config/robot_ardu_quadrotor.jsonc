@@ -207,7 +207,7 @@
       "local-host-ip": "0.0.0.0",
       "local-host-udp-port": 9003, // ardupilot sends to Unreal(AirSim)
 
-      "use-distance-sensor": true,
+      "use-distance-sensor": false,
       "actuator-order": [ 
         {
           "id": "Prop_FR_actuator"

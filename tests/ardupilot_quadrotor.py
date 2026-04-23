@@ -1,134 +1,95 @@
-"""
-Copyright (C) Microsoft Corporation.
-Copyright (C) 2025 IAMAI CONSULTING CORP
-MIT License.
-
-Demonstrates flying a FastPhysics quadrotor using an ardupilot controller.
-
-Note: Ardupilot controller also should be running for the Iris airframe
-      (FRAME_CLASS 1 and FRAME_TYPE 1) see Project AirSim docs for more info.
-
-      Mission Planner can be used to control the drone.
-"""
-
-import asyncio
-
+import time
+from dronekit import connect, VehicleMode, APIException
 from projectairsim import ProjectAirSimClient, Drone, World
 from projectairsim.utils import projectairsim_log
-# from projectairsim.image_utils import ImageDisplay
 
+def stable_connect():
+    vehicle = None
+    while not vehicle:
+        try:
+            print("Attempting to reach ArduPilot...")
+            # Use a longer timeout and wait_ready=False to prevent early exit
+            vehicle = connect('127.0.0.1:14550', wait_ready=False, timeout=60)
+        except (APIException, Exception) as e:
+            print(f"SITL not ready yet ({e}). Retrying in 2s...")
+            time.sleep(2)
 
-# Async main function to wrap async drone commands
-async def main():
-    # Create a Project AirSim client
-    client = ProjectAirSimClient()
+    print("Link established. Waiting for parameters...")
+    vehicle.wait_ready(True, timeout=60)
+    return vehicle
 
-    # Initialize an ImageDisplay object to position up to 2 pop-up sub-windows
-    # image_display = ImageDisplay()
+def run_dronekit_logic():
+    """Handles the ArduPilot flight commands via DroneKit"""
+    vehicle = stable_connect()
+    vehicle.parameters['ARMING_CHECK'] = 0
+
+    # Now wait for the vehicle to be truly ready
+    vehicle.wait_ready(True, timeout=60)
+    print("Vehicle ready!")
 
     try:
-        # Connect to simulation environment
+        print("Basic pre-arm checks...")
+        # Wait for vehicle to be armable
+        while not vehicle.is_armable:
+            print(" Waiting for vehicle to initialize...")
+            time.sleep(1)
+
+        print("Arming motors")
+        vehicle.mode = VehicleMode("GUIDED")
+        vehicle.armed = True
+
+        # # Confirm vehicle armed before attempting to take off
+        # time.sleep(5)
+        # while not vehicle.armed:
+        #     print(" Waiting for arming...")
+        #     time.sleep(1)
+
+        print("Taking off!")
+        target_altitude = 50
+        vehicle.simple_takeoff(target_altitude)
+
+        # Wait until the vehicle reaches a safe height
+        while True:
+            print(f" Altitude: {vehicle.location.global_relative_frame.alt}")
+            if vehicle.location.global_relative_frame.alt >= target_altitude * 0.95:
+                print("Reached target altitude")
+                break
+            time.sleep(1)
+
+        print("Hovering for 5 seconds...")
+        time.sleep(5)
+
+        print("Landing...")
+        vehicle.mode = VehicleMode("RTL")
+
+        # Wait for the drone to touch down
+        while vehicle.armed:
+            print(f" Landing... Altitude: {vehicle.location.global_relative_frame.alt}")
+            time.sleep(1)
+        
+        print("Landed and Disarmed.")
+
+    finally:
+        print("Closing vehicle object")
+        vehicle.close()
+
+def main():
+    # Initialize Project AirSim Client
+    client = ProjectAirSimClient()
+    
+    try:
         client.connect()
-
-        # Create a World object to interact with the sim world and load a scene
+        # Load the world and vehicle defined in your JSONC
         world = World(client, "/SUAS/simulation/sim_config/scene_ardu_quadrotor.jsonc", delay_after_load_sec=2)
-
-        # Create a Drone object to interact with a drone in the loaded sim world
         drone = Drone(client, world, "Drone1")
 
-    # ------------------------------------------------------------------------------
-    # Subscribe to chase camera sensor
-    #     chase_cam_window = "ChaseCam"
-    #     image_display.add_chase_cam(chase_cam_window)
-    #     client.subscribe(
-    #         drone.sensors["Chase"]["scene_camera"],
-    #         lambda _, chase: image_display.receive(chase, chase_cam_window),
-    #     )
-    #
-    #     # Subscribe to the drone's sensors with a callback to receive the sensor data
-    #     rgb_name = "RGB-Image"
-    #     image_display.add_image(rgb_name, subwin_idx=0)
-    #     client.subscribe(
-    #         drone.sensors["DownCamera"]["scene_camera"],
-    #         lambda _, rgb: image_display.receive(rgb, rgb_name),
-    #     )
-    #
-    #     depth_name = "Depth-Image"
-    #     image_display.add_image(depth_name, subwin_idx=2)
-    #     client.subscribe(
-    #         drone.sensors["DownCamera"]["depth_camera"],
-    #         lambda _, depth: image_display.receive(depth, depth_name),
-    #     )
-    #
-    #     image_display.start()
-
-        # ------------------------------------------------------------------------------
-        # Currently control APIs like arm, takeoff, move, etc. are not supported.
-        # Wait for a user input while Ardupilot is controlled externally
-        input("Press any key to stop seeing the drone's camera images...")
-
-
-        # ------------------------------------------------------------------------------
+        # Execute the flight logic
+        run_dronekit_logic()
 
     except Exception as err:
         projectairsim_log().error(f"Exception occurred: {err}", exc_info=True)
-
     finally:
-        # Always disconnect from the simulation environment to allow next connection
         client.disconnect()
 
-        # image_display.stop()
-
-
 if __name__ == "__main__":
-    asyncio.run(main())  # Runner for async main function
-
-
-# import asyncio
-# from dronekit import connect, VehicleMode
-# from projectairsim import ProjectAirSimClient, Drone, World
-#
-#
-# async def main():
-#     # --- 1. SET UP THE SIMULATION WORLD (Project AirSim) ---
-#     sim_client = ProjectAirSimClient(
-#         address="127.0.0.1",
-#         port_topics=8989,
-#         port_services=8990
-#     )
-#
-#     sim_client.connect()
-#     world = World(sim_client, "/SUAS/simulation/sim_config/scene_ardu_quadrotor.jsonc")
-#     # We use this primarily for cameras or resetting the environment
-#     sim_drone = Drone(sim_client, world, "Drone1")
-#
-#     # --- 2. SET UP THE FLIGHT CONTROL (DroneKit) ---
-#     # Connect to ArduPilot SITL.
-#     # Replace '127.0.0.1:14551' with the IP of the machine running ArduPilot.
-#     print("Connecting to ArduPilot via DroneKit...")
-#     vehicle = connect("tcp:127.0.0.1:14550", wait_ready=True)
-#     print("Connected to ArduPilot!")
-#
-#     try:
-#         # --- 3. EXECUTE COMMANDS VIA DRONEKIT ---
-#         print(f" Mode: {vehicle.mode.name}")
-#         print(f" Armed: {vehicle.armed}")
-#         print(f" GPS: {vehicle.location.global_frame}")
-#
-#         # Example: Simple Takeoff command using DroneKit
-#         if vehicle.is_armable:
-#             vehicle.mode = VehicleMode("GUIDED")
-#             vehicle.armed = True
-#             # vehicle.simple_takeoff(10) # Take off to 10m
-#
-#         # Keep the sim client alive to see cameras/physics
-#         while True:
-#             await asyncio.sleep(1)
-#
-#     finally:
-#         vehicle.close()
-#         sim_client.disconnect()
-#
-#
-# if __name__ == "__main__":
-#     asyncio.run(main())
+    main()

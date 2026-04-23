@@ -11,10 +11,7 @@ import numpy as np
 # from projectairsim.utils import projectairsim_log, unpack_image
 # from projectairsim.image_utils import ImageDisplay
 
-address = "tcp:127.0.0.1:14560"
-other_address = "tcp:11.96.224.102:5760"
-other3_address = "udp:0.0.0.0:14550"
-port_topics = "8990"
+address = "127.0.0.1:14550"
 
 # client = ProjectAirSimClient(address=other_address)
 #
@@ -27,10 +24,6 @@ vehicle = dronekit.connect(address, wait_ready=True, timeout=90)
 #     for i in range(1, 1)
 # ]
 # drone = Drone(client=client, world=world, name="Drone1")
-
-# sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# sock.connect(("127.0.0.1", 9900))
-# print("TCP Server Connected @ 127.0.0.1:9900!")
 
 async def main():
     # DroneKit uses different commands than ProjectAirSim
