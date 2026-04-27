@@ -1,0 +1,28 @@
+{
+    "SettingsVersion": 1.2,
+    "LogMessagesVisible": true,
+    "SimMode": "Multirotor",
+    "OriginGeopoint": {
+        "Latitude": 37.948692,
+        "Longitude": -91.784160,
+        "Altitude": 583
+    },
+    "ClockSpeed": 1,
+    "PhysicsEngineName": "FastPhysicsEngine",
+    "PhysicsSettings": {
+        "UpdateRate": 100
+    },
+    "CameraDefaults": {
+        "CaptureSettings": []
+    },
+    "Vehicles": {
+        "Copter": {
+            "VehicleType": "ArduCopter",
+            "UseSerial": false,
+            "LocalHostIp": "127.0.0.1",
+            "UdpIp": "127.0.0.1",
+            "UdpPort": 9003,
+            "ControlPort": 9002
+        }
+    }
+} 
