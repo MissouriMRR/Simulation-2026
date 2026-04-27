@@ -68,25 +68,6 @@ def run_dronekit_logic():
         print("Closing vehicle object")
         vehicle.close()
 
-def run_suas_code():
-    project_root = "/SUAS"
-    command = ["uv", "run", "run.py", "--airsim"]
-    try:
-        process = subprocess.run(
-            command,
-            cwd=project_root,
-            check=True,
-            text=True,
-            capture_output=False
-        )
-        print("Flight script executed successfully!")
-    except subprocess.CalledProcessError as err:
-        print(f"The simulation failed with exit code: {err}")
-    except FileNotFoundError:
-        print("Error: 'uv' is not installed")
-
-
-
 def main():
     # Initialize Project AirSim Client
     client = ProjectAirSimClient()

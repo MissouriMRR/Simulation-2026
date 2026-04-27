@@ -5,12 +5,10 @@
       "type": "robot",
       "name": "Drone1",
       "origin": {
-        "reference-frame": "Frame",
-        "xyz": "0 0 -15",
+        "xyz": "0.0 0.0 -15.0",
         "rpy-deg": "0 0 0"
       },
-      "robot-config": "/SUAS/simulation/sim_config/robot_quadtiltrotor_fastphysics_px4_sitl.jsonc",
-      "start-landed": true
+      "robot-config": "/SUAS/simulation/sim_config/robot_ardu_quadrotor.jsonc"
     }
   ],
   "clock": {
@@ -20,9 +18,9 @@
     "pause-on-start": false
   },
   "home-geo-point": {
-    "latitude": 37.9490953,
-    "longitude": -91.7848293,
-    "altitude": 100.0
+    "latitude": 37.94894101091474,
+    "longitude": -91.78455965055593,
+    "altitude": 20.0
   },
   "segmentation": {
     "initialize-ids": true,
