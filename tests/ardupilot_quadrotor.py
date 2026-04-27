@@ -1,4 +1,5 @@
 import time
+import subprocess
 from dronekit import connect, VehicleMode, APIException
 from projectairsim import ProjectAirSimClient, Drone, World
 from projectairsim.utils import projectairsim_log
@@ -38,12 +39,6 @@ def run_dronekit_logic():
         vehicle.mode = VehicleMode("GUIDED")
         vehicle.armed = True
 
-        # # Confirm vehicle armed before attempting to take off
-        # time.sleep(5)
-        # while not vehicle.armed:
-        #     print(" Waiting for arming...")
-        #     time.sleep(1)
-
         print("Taking off!")
         target_altitude = 50
         vehicle.simple_takeoff(target_altitude)
@@ -73,18 +68,39 @@ def run_dronekit_logic():
         print("Closing vehicle object")
         vehicle.close()
 
+def run_suas_code():
+    project_root = "/SUAS"
+    command = ["uv", "run", "run.py", "--airsim"]
+    try:
+        process = subprocess.run(
+            command,
+            cwd=project_root,
+            check=True,
+            text=True,
+            capture_output=False
+        )
+        print("Flight script executed successfully!")
+    except subprocess.CalledProcessError as err:
+        print(f"The simulation failed with exit code: {err}")
+    except FileNotFoundError:
+        print("Error: 'uv' is not installed")
+
+
+
 def main():
     # Initialize Project AirSim Client
     client = ProjectAirSimClient()
     
     try:
+        print("Connecting...")
         client.connect()
         # Load the world and vehicle defined in your JSONC
         world = World(client, "/SUAS/simulation/sim_config/scene_ardu_quadrotor.jsonc", delay_after_load_sec=2)
         drone = Drone(client, world, "Drone1")
 
         # Execute the flight logic
-        run_dronekit_logic()
+        print("Running dronekit logic...")
+        run_suas_code()
 
     except Exception as err:
         projectairsim_log().error(f"Exception occurred: {err}", exc_info=True)

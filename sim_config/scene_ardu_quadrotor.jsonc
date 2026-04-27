@@ -18,9 +18,9 @@
     "pause-on-start": false
   },
   "home-geo-point": {
-    "latitude": 47.641468,
-    "longitude": -122.140165,
-    "altitude": 122.0
+    "latitude": 37.94894101091474,
+    "longitude": -91.78455965055593,
+    "altitude": 20.0
   },
   "segmentation": {
     "initialize-ids": true,
