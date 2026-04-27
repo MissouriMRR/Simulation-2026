@@ -1,5 +1,4 @@
 import time
-import subprocess
 from dronekit import connect, VehicleMode, APIException
 from projectairsim import ProjectAirSimClient, Drone, World
 from projectairsim.utils import projectairsim_log

@@ -1,5 +1,5 @@
 {
-  "id": "SUAS_scene",
+  "id": "IARC_scene",
   "actors": [
     {
       "type": "robot",
@@ -8,7 +8,7 @@
         "xyz": "0.0 0.0 -15.0",
         "rpy-deg": "0 0 0"
       },
-      "robot-config": "/SUAS/simulation/sim_config/robot_ardu_quadrotor.jsonc" // Change /SUAS/ to whatever directory
+      "robot-config": "/IARC/simulation/sim_config/robot_ardu_quadrotor.jsonc"
     }
   ],
   "clock": {
@@ -17,7 +17,7 @@
     "real-time-update-rate": 3000000,
     "pause-on-start": false
   },
-  "home-geo-point": { // Current coordinates are the golf course
+  "home-geo-point": { // Golf course coordinates
     "latitude": 37.94894101091474,
     "longitude": -91.78455965055593,
     "altitude": 15.0

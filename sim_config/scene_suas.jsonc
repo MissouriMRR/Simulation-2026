@@ -3,7 +3,7 @@
   "actors": [
     {
       "type": "robot",
-      "name": "Drone1",
+      "name": "Drone",
       "origin": {
         "xyz": "0.0 0.0 -15.0",
         "rpy-deg": "0 0 0"
@@ -17,10 +17,10 @@
     "real-time-update-rate": 3000000,
     "pause-on-start": false
   },
-  "home-geo-point": {
+  "home-geo-point": { // Golf course coordinates
     "latitude": 37.94894101091474,
     "longitude": -91.78455965055593,
-    "altitude": 20.0
+    "altitude": 15.0
   },
   "segmentation": {
     "initialize-ids": true,
