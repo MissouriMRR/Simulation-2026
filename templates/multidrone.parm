@@ -1,0 +1,23 @@
+# Use single IMU to reduce EKF load
+EK3_IMU_MASK 1
+EK3_ENABLE 1
+
+# Reduce estimator CPU usage
+EK3_GPS_TYPE 3
+EK3_SRC1_POSXY 3
+EK3_SRC1_VELXY 3
+EK3_SRC1_POSZ 1
+EK3_SRC1_VELZ 3
+
+# Lower simulation sensor load
+INS_FAST_SAMPLE 0
+
+# Improve SITL timing
+SIM_SPEEDUP 1
+SIM_RATE_HZ 100
+SCHED_LOOP_RATE 100
+
+# Stabilize takeoff behavior
+ATC_RAT_RLL_P 0.12
+ATC_RAT_PIT_P 0.12
+ATC_RAT_YAW_P 0.2

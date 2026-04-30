@@ -202,10 +202,10 @@
     "type": "ardupilot-api",
     "ardupilot-settings": {
       "ardupilot-ip": "127.0.0.1",
-      "ardupilot-udp-port": 9002, // AirSim sends to the SITL(ardupilot)
+      "ardupilot-udp-port": 9003, // AirSim sends to the SITL(ardupilot)
 
-      "local-host-ip": "0.0.0.0",
-      "local-host-udp-port": 9003, // ardupilot sends to Unreal(AirSim)
+      "local-host-ip": "127.0.0.1",
+      "local-host-udp-port": 9002, // ardupilot sends to Unreal(AirSim)
 
       "use-distance-sensor": false,
       "actuator-order": [ 
