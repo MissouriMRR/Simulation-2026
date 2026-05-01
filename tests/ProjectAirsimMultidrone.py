@@ -143,13 +143,21 @@ async def main():
         # Connect to simulation environment
         client.connect()
 
+        # we need to init an empty scene BEFORE starting the sim container (drone SITL or something like that) since it wants to download scene data
+        # this download is impossible if the scene isn't initialized at all, and it just gives up if the download fails
         World(client, "scene_ardu_empty.jsonc", delay_after_load_sec=2, sim_config_path="./simulation/sim_config")
 
+        # block and wait for sim container to start
         input("Start your sim container now. Press enter to continue (add drones to scene)")
 
         # SET DRONE GRID HERE
         drone_grid = (4, 4)
         processes = []
+
+        # this reinitializes the scene to contain the drones
+        # the reason we don't do this first is because Project Airsim really wants the drone SITL(s) to be started before the drones are created
+        # it becomes this wierd thing where the SITL wants the sim to be started first, but the drones in the sim wants the SITL to be started first
+        # hence, the empty scene stuff
         world = MultidroneWorld(client, "scene_ardu_quadrotor.jsonc", delay_after_load_sec=2, sim_config_path="./simulation/sim_config", drone_grid=drone_grid)
 
         # Create a Drone object to interact with a drone in the loaded sim world
