@@ -38,15 +38,6 @@ class DronekitDrone:
         print("connecting", self._connection_string)
         vehicle = connect(self._connection_string, wait_ready=True, timeout=timeout)
 
-        # if vehicle.parameters["SCHED_LOOP_RATE"] != 200:
-        #     print("Lowering SCHED_LOOP_RATE to 200 for stability...")
-        #     vehicle.parameters["SCHED_LOOP_RATE"] = 200
-
-        #     # ArduPilot requires a reboot for this specific parameter
-        #     print("Rebooting vehicle to apply changes...")
-        #     vehicle.reboot()
-        #     vehicle = connect(self._connection_string, wait_ready=True)
-
         # Get some vehicle attributes (state)
         print("Get some vehicle attribute values:")
         print(" GPS: %s" % vehicle.gps_0)
@@ -59,22 +50,6 @@ class DronekitDrone:
         while not vehicle.is_armable:
             print("Waiting for vehicle to initialize...")
             time.sleep(1)
-
-        # # Wait for EKF to settle (Home location to be set)
-        # while not vehicle.ekf_ok:
-        #     print(" Waiting for EKF to initialize...")
-        #     time.sleep(1)
-
-        # # Switch to GUIDED *after* EKF is happy
-        # vehicle.mode = VehicleMode("GUIDED")
-
-        # # Wait for mode change to confirm
-        # while vehicle.mode.name != "GUIDED":
-        #     time.sleep(0.5)
-
-        # vehicle.armed = True
-        # while not vehicle.armed:
-        #     time.sleep(0.5)
 
         vehicle.parameters["ARMING_CHECK"] = 0
         vehicle.mode = VehicleMode("GUIDED")
@@ -136,9 +111,6 @@ async def main():
     # Create a Project AirSim client
     client = ProjectAirSimClient()
 
-    # Initialize an ImageDisplay object to display camera sub-windows
-    # image_display = ImageDisplay()
-
     try:
         # Connect to simulation environment
         client.connect()
@@ -155,13 +127,10 @@ async def main():
         processes = []
 
         # this reinitializes the scene to contain the drones
-        # the reason we don't do this first is because Project Airsim really wants the drone SITL(s) to be started before the drones are created
-        # it becomes this wierd thing where the SITL wants the sim to be started first, but the drones in the sim wants the SITL to be started first
+        # the reason we don't do this first is that Project Airsim really wants the drone SITL(s) to be started before the drones are created
+        # it becomes this weird thing where the SITL wants the sim to be started first, but the drones in the sim wants the SITL to be started first
         # hence, the empty scene stuff
         world = MultidroneWorld(client, "scene_ardu_quadrotor.jsonc", delay_after_load_sec=2, sim_config_path="./simulation/sim_config", drone_grid=drone_grid)
-
-        # Create a Drone object to interact with a drone in the loaded sim world
-        # drone = Drone(client, world, "Drone1")
 
         input("Press enter to start connections (may need to wait a while for drones to get ready)")
         # Create a World object to interact with the sim world and load a scene
@@ -180,36 +149,7 @@ async def main():
         for queue in queues:
                 queue.put("takeoff")
 
-        # ------------------------------------------------------------------------------
-
-        # # Subscribe to chase camera sensor as a client-side pop-up window
-        # chase_cam_window = "ChaseCam"
-        # image_display.add_chase_cam(chase_cam_window)
-        # client.subscribe(
-        #     drone.sensors["Chase"]["scene_camera"],
-        #     lambda _, chase: image_display.receive(chase, chase_cam_window),
-        # )
-
-        # # Subscribe to the downward-facing camera sensor's RGB and Depth images
-        # rgb_name = "RGB-Image"
-        # image_display.add_image(rgb_name, subwin_idx=0)
-        # client.subscribe(
-        #     drone.sensors["DownCamera"]["scene_camera"],
-        #     lambda _, rgb: image_display.receive(rgb, rgb_name),
-        # )
-
-        # depth_name = "Depth-Image"
-        # image_display.add_image(depth_name, subwin_idx=2)
-        # client.subscribe(
-        #     drone.sensors["DownCamera"]["depth_camera"],
-        #     lambda _, depth: image_display.receive(depth, depth_name),
-        # )
-
-        # image_display.start()
-
-        # ------------------------------------------------------------------------------
-
-        # basic drone control: n for north, e for east, etc; u for up, d for down; can put multiple instructions per entry (e.g., "nnnnneeeeeeuuuu")
+        # basic drone control: n for north, e for east, etc.; u for up, d for down; can put multiple instructions per entry (e.g., "nnnnneeeeeeuuuu")
         # "quit", "q", or "die" to end connections
         while True:
             # print("Loc:", lat, lon, alt)
@@ -220,12 +160,6 @@ async def main():
                 for queue in queues:
                     queue.put(None)
                 break
-
-            # if command.lower() in ("collide"):
-            #     loc = drones[0].loc
-            #     for drone in drones:
-            #         drone.goto(loc.lat, loc.lon, loc.alt)
-            #     break
 
             for cmd in command:
                 match cmd:
@@ -257,8 +191,6 @@ async def main():
 
         for p in processes:
             p.join()
-
-        # image_display.stop()
 
 
 if __name__ == "__main__":
