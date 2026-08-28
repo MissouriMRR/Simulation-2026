@@ -337,6 +337,21 @@
       }
     },
     {
+      // Matched to the Raspberry Pi AI Camera (Sony IMX500) so ground footprints and
+      // pixel-to-ground maths carry over from the sim to the real airframe.
+      //
+      // The published spec gives only a diagonal FoV of 78.3 deg. With the sensor's
+      // 4056x3040 array of 1.55 um pixels (6.287 x 4.712 mm, 7.857 mm diagonal) that works
+      // out to 66.16 deg horizontal and 52.05 deg vertical.
+      //
+      // fov-degrees is the HORIZONTAL angle; the vertical one follows from width:height, so
+      // the 4:3 render aspect is what makes the vertical come out right (52.08 deg, 0.03 deg
+      // off). The old 400x225 was 16:9, which gave a 40.25 deg vertical -- nearly 12 deg
+      // narrow -- no matter what fov-degrees said.
+      //
+      // Deliberately no "gimbal" block: the real camera is bolted to the frame and tilts
+      // with the airframe. Stabilising it here would hide exactly the attitude compensation
+      // vision/common/drone_coordinates.py exists to do.
       "id": "DownCamera",
       "type": "camera",
       "enabled": true,
@@ -345,9 +360,9 @@
       "capture-settings": [
         {
           "image-type": 0,
-          "width": 400,
-          "height": 225,
-          "fov-degrees": 90,
+          "width": 640,
+          "height": 480,
+          "fov-degrees": 66.16,
           "capture-enabled": true,
           "streaming-enabled": false,
           "pixels-as-float": false,
@@ -356,9 +371,9 @@
         },
         {
           "image-type": 1,
-          "width": 400,
-          "height": 225,
-          "fov-degrees": 90,
+          "width": 640,
+          "height": 480,
+          "fov-degrees": 66.16,
           "capture-enabled": false,
           "streaming-enabled": false,
           "pixels-as-float": false,
@@ -366,9 +381,9 @@
         },
         {
           "image-type": 2,
-          "width": 400,
-          "height": 225,
-          "fov-degrees": 90,
+          "width": 640,
+          "height": 480,
+          "fov-degrees": 66.16,
           "capture-enabled": true,
           "streaming-enabled": false,
           "pixels-as-float": false,
@@ -376,9 +391,9 @@
         },
         {
           "image-type": 3,
-          "width": 400,
-          "height": 225,
-          "fov-degrees": 90,
+          "width": 640,
+          "height": 480,
+          "fov-degrees": 66.16,
           "capture-enabled": false,
           "streaming-enabled": false,
           "pixels-as-float": false,

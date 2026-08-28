@@ -1,5 +1,63 @@
 # How to use Multiple Drones with Project Airsim
 
+## Quick start: N drones through the IARC flight code
+
+This is the current path, driven by [interfaces/iarc.py](./interfaces/iarc.py). It runs the
+real state machine with interdrone comms, one process per drone. The standalone dronekit
+example described further down predates it and is kept for reference.
+
+`NUM_DRONES` must match on both sides -- `iarc.py` and `sim_start_drones.sh` derive their
+port assignments from it independently, and nothing checks that they agree.
+
+1. Start the Unreal / ProjectAirSim simulation on Windows.
+2. In the `env` container, start the orchestrator:
+
+   ```shell
+   NUM_DRONES=2 MISSION_CONFIG=mission_config_2drone.json \
+     SITL_HOST=<wsl-vm-ip> PAS_HOST=<windows-wsl-adapter-ip> \
+     python iarc.py
+   ```
+
+   It loads the empty scene, then blocks waiting for the SITLs.
+3. In a second terminal, start the SITLs:
+
+   ```shell
+   NUM_DRONES=2 AIRSIM_HOST=<windows-wsl-adapter-ip> ./run_container.sh sim
+   ```
+
+   This attaches to a tmux session with one window per drone. Wait until every window
+   reports `Waiting for heartbeat from tcp:127.0.0.1:5760`.
+4. Press Enter in the first terminal. It spawns the drones, waits for MAVLink on each
+   drone's port, then launches `run.py --airsim -i <id>` per drone.
+
+`SITL_HOST` is the WSL VM's IP (`hostname -I` inside WSL) and `PAS_HOST` / `AIRSIM_HOST`
+are the Windows-side `vEthernet (WSL)` adapter IP (`ipconfig` on Windows). Both default to
+loopback when everything shares one network namespace. Step 4's MAVLink wait dials
+`SITL_MAVLINK_HOST`, which defaults to `SITL_HOST`; set it explicitly only if the SITL
+container exposes its MAVLink TCP ports on a different address than the one it receives
+AirSim's sensor UDP on.
+
+### Port map
+
+For drone index `i` (0-based; mission config IDs are 1-based, so `i = id - 1`):
+
+| Port | Purpose | Set by |
+| --- | --- | --- |
+| `5760 + 10i` | SITL serial0, claimed by MAVProxy | `--instance` |
+| `5762 + 10i` | SITL serial1, what dronekit connects to | `--instance`, read in `state_machine/drone.py` |
+| `9003 + 10i` | AirSim -> SITL, sensor data | `--instance`, `ardupilot-udp-port` |
+| `9002 + 10i` | SITL -> AirSim, servo output | `--instance`, `local-host-udp-port` |
+| `5001 + i` | interdrone comms | `drone_info` in the mission config |
+
+The SITL side of all four comes from `--instance` alone -- `arducopter --help` describes it
+as adding `10*instance` to *all* port numbers. The scene config side is computed to match in
+`ArduWorld._build_actors`. Note that `--sim-port-in`/`--sim-port-out` are options on the
+`arducopter` binary, not on `sim_vehicle.py`; they are not needed here and setting them
+would double up with the offset `--instance` already applies.
+
+Three files have to agree on this arithmetic: `sim_start_drones.sh`, `interfaces/iarc.py`,
+and `state_machine/drone.py`.
+
 ## Environment Setup
 
 The environment setup process is unchanged from the normal sim environment setup: <https://missourimrr.github.io/docs/simulation/installation/windows/#environment-setup>
