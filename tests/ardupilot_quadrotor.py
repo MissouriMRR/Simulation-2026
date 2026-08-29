@@ -75,7 +75,7 @@ def main():
         print("Connecting...")
         client.connect()
         # Load the world and vehicle defined in your JSONC
-        world = World(client, "/SUAS/simulation/sim_config/scene_ardu_quadrotor.jsonc", delay_after_load_sec=2)
+        world = World(client, "/workspace/simulation/sim_config/scene_ardu_quadrotor.jsonc", delay_after_load_sec=2)
         drone = Drone(client, world, "Drone1")
 
         # Execute the flight logic

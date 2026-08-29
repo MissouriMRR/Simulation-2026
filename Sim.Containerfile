@@ -25,8 +25,15 @@ RUN pip install -U numpy
 # add GolfCourse location to ArduPilot locations
 RUN echo '# Multirotor Locations\nGolfCourse=37.9490953,-91.7848293,0,0' >> /ardupilot/Tools/autotest/locations.txt
 
-COPY ./simulation/sim_start_drones.sh /ardupilot/Tools/autotest/
-COPY ./simulation/templates/multidrone.parm /ardupilot/Tools/autotest/
+COPY ./sim_start_drones.sh /ardupilot/Tools/autotest/
+COPY ./templates/multidrone.parm /ardupilot/Tools/autotest/
+
+# Strip carriage returns in case the build context was checked out on Windows with CRLF
+# endings. .gitattributes should already prevent this
+RUN sed -i 's/\r$//' /ardupilot/Tools/autotest/sim_start_drones.sh \
+    && chmod +x /ardupilot/Tools/autotest/sim_start_drones.sh
+
+LABEL org.opencontainers.image.source=https://github.com/MissouriMRR/Simulation-2026
 
 # ENVIRONMENT VARIABLES
 

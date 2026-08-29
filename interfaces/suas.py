@@ -98,7 +98,7 @@ def run_drone(connection_string, queue, timeout=30):
             drone.translate(*cmd)
 
 def run_suas_code():
-    project_root = "/SUAS"
+    project_root = "/workspace"
     command = ["uv", "run", "run.py", "--airsim"]
     try:
         process = subprocess.run(

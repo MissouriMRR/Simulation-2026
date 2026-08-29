@@ -18,7 +18,7 @@ address = "127.0.0.1:14550"
 # client.connect()
 vehicle = dronekit.connect(address, wait_ready=True, timeout=90)
 
-# world = World(client=client, scene_config_name="/SUAS/simulation/sim_config/scene_suas.jsonc")
+# world = World(client=client, scene_config_name="/workspace/simulation/sim_config/scene_suas.jsonc")
 # drones = [
 #     Drone(client=client, world=world, name=f"Drone{i}")
 #     for i in range(1, 1)
