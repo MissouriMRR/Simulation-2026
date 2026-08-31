@@ -36,3 +36,9 @@ case $1 in
     install_amd
   ;;
 esac
+
+export PATH="$HOME/.local/bin:$PATH"
+
+echo
+echo "Pulling prebuilt container images..."
+"$script_dir/run_container.sh" pull
