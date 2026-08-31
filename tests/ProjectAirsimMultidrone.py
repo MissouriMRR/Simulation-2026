@@ -130,7 +130,7 @@ async def main():
         # the reason we don't do this first is that Project Airsim really wants the drone SITL(s) to be started before the drones are created
         # it becomes this weird thing where the SITL wants the sim to be started first, but the drones in the sim wants the SITL to be started first
         # hence, the empty scene stuff
-        world = MultidroneWorld(client, "scene_ardu_quadrotor.jsonc", delay_after_load_sec=2, sim_config_path="./simulation/sim_config", drone_grid=drone_grid)
+        world = MultidroneWorld(client, "scene_ardu_quadrotor_template.jsonc", delay_after_load_sec=2, sim_config_path="./simulation/sim_config", drone_grid=drone_grid)
 
         input("Press enter to start connections (may need to wait a while for drones to get ready)")
         # Create a World object to interact with the sim world and load a scene

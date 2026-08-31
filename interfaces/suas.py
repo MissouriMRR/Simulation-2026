@@ -131,7 +131,7 @@ def main():
         drone_grid = (4, 4)
         processes = []
 
-        world = MultidroneWorld(client, "scene_ardu_quadrotor.jsonc", delay_after_load_sec=2,
+        world = MultidroneWorld(client, "scene_ardu_quadrotor_template.jsonc", delay_after_load_sec=2,
                                 sim_config_path="./simulation/sim_config", drone_grid=drone_grid)
 
         input("Press enter to start connections (may need to wait a while for drones to get ready)")
