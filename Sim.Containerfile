@@ -35,6 +35,13 @@ RUN sed -i 's/\r$//' /ardupilot/Tools/autotest/sim_start_drones.sh \
 
 LABEL org.opencontainers.image.source=https://github.com/MissouriMRR/Simulation-2026
 
+# Strip carriage returns in case the build context was checked out on Windows with CRLF
+# endings. A CRLF shebang makes exec fail with "No such file or directory" naming the
+# script itself, which is a genuinely confusing way to spend an afternoon. .gitattributes
+# should already prevent this; this is the belt to that pair of braces.
+RUN sed -i 's/\r$//' /ardupilot/Tools/autotest/sim_start_drones.sh \
+    && chmod +x /ardupilot/Tools/autotest/sim_start_drones.sh
+
 # ENVIRONMENT VARIABLES
 
 # The variables below are passed to sim_start_drones.sh within the container (see below)

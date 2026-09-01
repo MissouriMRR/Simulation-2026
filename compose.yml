@@ -8,6 +8,14 @@ services:
       dockerfile: Env.Containerfile
     container_name: multirotor_env
     network_mode: host
+    environment:
+      # Keep the project venv off the Windows bind mount. Left at the default /IARC/.venv
+      # it is rebuilt on every single run (~2.5 min): the venv is shared with the Windows
+      # host, so its bin/python3 symlink does not resolve inside the container and uv
+      # discards it. The uv cache lives under the same volume so wheel installs can
+      # hardlink instead of full-copying.
+      - UV_PROJECT_ENVIRONMENT=/opt/uv/venv
+      - UV_CACHE_DIR=/opt/uv/cache
     volumes:
       # The flight-code repo this container runs against. Defaults to the parent directory,
       # which is correct when this repo is checked out as <flight-code>/simulation.
@@ -19,16 +27,39 @@ services:
     stdin_open: true
     tty: true
   sim:
-    environment:  # See Sim.Containerfile for explanations
+    environment: # See Sim.Containerfile for explanations
       - OUT_PORT=14550
       - OUT_HOST=127.0.0.1
-      - NUM_DRONES=1
+      # NUM_DRONES must match the drone count passed to simulation/interfaces/iarc.py,
+      # since both sides derive their ports from it independently.
+      - NUM_DRONES=${NUM_DRONES:-1}
+      # AIRSIM_HOST is where the Unreal/ProjectAirSim server is reachable from inside WSL.
+      # Leave it unset when Unreal runs on the same host; set it to the Windows-side WSL
+      # adapter IP (see `ipconfig`, "vEthernet (WSL)") when Unreal runs on Windows, e.g.
+      #   NUM_DRONES=2 AIRSIM_HOST=172.27.192.1 ./run_container.sh sim
+      - AIRSIM_HOST=${AIRSIM_HOST:-127.0.0.1}
     image: ghcr.io/missourimrr/multirotor-sim:latest
     build:
-      context: .
-      dockerfile: Sim.Containerfile
+      context: ..
+      dockerfile: simulation/Sim.Containerfile
     container_name: multirotor_sim
     network_mode: host
-    command: python /ardupilot/Tools/autotest/sim_vehicle.py -v ArduCopter -f airsim-copter --out=127.0.0.1:14550 -A "--sim-port-in=9002 --sim-port-out=9003"
     stdin_open: true
+    volumes:
+      # Bind-mounted over the copy baked in by Sim.Containerfile, so edits to the port
+      # arithmetic take effect on the next run instead of needing an image rebuild.
+      - type: bind
+        source: ./sim_start_drones.sh
+        target: /ardupilot/Tools/autotest/sim_start_drones.sh
+    # sim_start_drones.sh launches NUM_DRONES SITL instances in tmux windows, assigning
+    # each one its own AirSim UDP port pair and MAVLink TCP ports. It handles the N=1 case
+    # too, so single- and multi-drone runs share one code path.
+    # Invoked via `bash` rather than executed directly: the bind mount above comes off a
+    # Windows drive, where the exec bit does not reliably survive.
+    # --sim-address is sim_vehicle.py's own option; passing it via -A instead would leave
+    # sim_vehicle's default 127.0.0.1 on the command line as a confusing duplicate.
+    command: bash /ardupilot/Tools/autotest/sim_start_drones.sh
     tty: true
+
+volumes:
+  iarc_uv:

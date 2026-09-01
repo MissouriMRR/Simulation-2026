@@ -1,5 +1,5 @@
 ﻿"""
-Copyright (C) Microsoft Corporation. 
+Copyright (C) Microsoft Corporation.
 Copyright (C) 2025 IAMAI CONSULTING CORP
 MIT License.
 
@@ -65,9 +65,7 @@ class DronekitDrone:
         loc = self._drone.location.global_relative_frame
         lat, lon, alt = loc.lat, loc.lon, loc.alt
 
-        self._drone.simple_goto(
-            LocationGlobalRelative(lat + dlat, lon + dlon, alt + dalt)
-        )
+        self._drone.simple_goto(LocationGlobalRelative(lat + dlat, lon + dlon, alt + dalt))
 
     def goto(self, lat, lon, alt):
         self._drone.simple_goto(LocationGlobalRelative(lat, lon, alt))
@@ -85,6 +83,7 @@ class DronekitDrone:
 
     def close(self):
         self._drone.close()
+
 
 def run_drone(connection_string, queue, timeout=30):
     drone = DronekitDrone(connection_string)
@@ -106,6 +105,7 @@ def run_drone(connection_string, queue, timeout=30):
         else:
             drone.translate(*cmd)
 
+
 # Async main function to wrap async drone commands
 async def main():
     # Create a Project AirSim client
@@ -117,7 +117,12 @@ async def main():
 
         # we need to init an empty scene BEFORE starting the sim container (drone SITL or something like that) since it wants to download scene data
         # this download is impossible if the scene isn't initialized at all, and it just gives up if the download fails
-        World(client, "scene_ardu_empty.jsonc", delay_after_load_sec=2, sim_config_path="./simulation/sim_config")
+        World(
+            client,
+            "scene_ardu_empty.jsonc",
+            delay_after_load_sec=2,
+            sim_config_path="./simulation/sim_config",
+        )
 
         # block and wait for sim container to start
         input("Start your sim container now. Press enter to continue (add drones to scene)")
@@ -130,11 +135,17 @@ async def main():
         # the reason we don't do this first is that Project Airsim really wants the drone SITL(s) to be started before the drones are created
         # it becomes this weird thing where the SITL wants the sim to be started first, but the drones in the sim wants the SITL to be started first
         # hence, the empty scene stuff
-        world = MultidroneWorld(client, "scene_ardu_quadrotor_template.jsonc", delay_after_load_sec=2, sim_config_path="./simulation/sim_config", drone_grid=drone_grid)
+        world = MultidroneWorld(
+            client,
+            "scene_ardu_quadrotor.jsonc",
+            delay_after_load_sec=2,
+            sim_config_path="./simulation/sim_config",
+            drone_grid=drone_grid,
+        )
 
         input("Press enter to start connections (may need to wait a while for drones to get ready)")
         # Create a World object to interact with the sim world and load a scene
-        base_port = 5762
+        base_port = 5760
         drone_count = drone_grid[0] * drone_grid[1]
         queues = [mp.Queue() for _ in range(drone_count)]
 
@@ -145,9 +156,8 @@ async def main():
 
             processes.append(proc)
 
-
         for queue in queues:
-                queue.put("takeoff")
+            queue.put("takeoff")
 
         # basic drone control: n for north, e for east, etc.; u for up, d for down; can put multiple instructions per entry (e.g., "nnnnneeeeeeuuuu")
         # "quit", "q", or "die" to end connections
